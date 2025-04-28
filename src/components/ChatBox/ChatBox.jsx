@@ -10,7 +10,7 @@ import upload from '../../lib/upload'
 
 const ChatBox = () => {
 
-  const { userData, messages, setMessages, messagesId, chatUser } = useContext(AppContext)
+  const { userData, messages, setMessages, messagesId, chatUser, chatVisible, setChatVisible } = useContext(AppContext)
 
   const [input, setInput] = useState("")
 
@@ -110,19 +110,20 @@ const ChatBox = () => {
 
 
   return chatUser ? (
-    <div className='chat-box'>
+    <div className={`chat-box ${chatVisible?"":"hidden"}`}>
       <div className="chat-user">
         <img src={assets.profile_img} alt="" />
         {/* <img src={chatUser.userData.avatar} alt="" /> */}
-        <p>{chatUser.userData.name}<img src={assets.green_dot} className='dot' alt="" /></p>
+        <p>{chatUser.userData.name}{Date.now() - chatUser.userData.lastSeen <= 70000 ? <img src={assets.green_dot} className='dot' alt="" /> : null}</p>
         <img src={assets.help_icon} className='help' alt="" />
+        <img onClick={()=>setChatVisible(false)} src={assets.arrow_icon} className='arrow' alt="" />
       </div>
 
       <div className="chat-msg">
         {messages.map((msg, index) => (
           <div key={index} className={msg.sId === userData.id ? "s-msg" : "r-msg"}>
             {msg["Image"] ?
-              <img className='msg-img' src={msg.image} alt="" />:
+              <img className='msg-img' src={msg.image} alt="" /> :
               <p className="msg">{msg.text}</p>
             }
 
@@ -146,7 +147,7 @@ const ChatBox = () => {
       </div>
     </div>
   ) :
-    <div className='chat-welcome'>
+    <div className={`chat-welcome ${chatVisible?"":"hidden"}`}>
       <img src={assets.logo_icon} alt="" />
       <p>Chat anytime, anywhere</p>
     </div>
